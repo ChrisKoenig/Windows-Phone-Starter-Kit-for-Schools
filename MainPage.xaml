@@ -1,0 +1,153 @@
+﻿<phone:PhoneApplicationPage 
+    x:Class="MySchoolApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="800" 
+    d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait"  Orientation="Portrait"
+    shell:SystemTray.IsVisible="False">
+
+    <phone:PhoneApplicationPage.Resources>
+        <DataTemplate x:Key="ContactDataTemplate">
+            <StackPanel Margin="0,0,12,24" Orientation="Horizontal">
+                <Canvas Height="100" Background="{StaticResource Border100Brush}" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
+            		<Image Source="{Binding PhotoUrl}" Width="86" Height="86" Stretch="UniformToFill" VerticalAlignment="Top" HorizontalAlignment="Left" Canvas.Left="7" Canvas.Top="7" />
+            	</Canvas>
+            	<StackPanel Margin="0,-15,0,0">
+            		<TextBlock Text="{Binding Name}" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="12,0,0,0" HorizontalAlignment="Left"/>
+            		<TextBlock Text="{Binding Email}" MouseLeftButtonUp="EmailTextBlock_MouseLeftButtonUp" Margin="12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+            		<TextBlock Text="{Binding PhoneNumber}" MouseLeftButtonUp="PhoneTextBlock_MouseLeftButtonUp" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,6,12,0"/>
+            	</StackPanel>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="WeatherDataTemplate">
+            <StackPanel Margin="0,0,0,24" Orientation="Horizontal">
+                <Canvas Height="100" Background="{StaticResource Border100Brush}" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Image Source="{Binding ImageUrl}" Width="86" Height="86" Stretch="UniformToFill" VerticalAlignment="Top" HorizontalAlignment="Left" Canvas.Left="7" Canvas.Top="7" />
+                </Canvas>
+                <StackPanel Margin="0,-15,0,24">
+                    <TextBlock Text="{Binding Name}" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="12,0,0,0" HorizontalAlignment="Left" Width="295.6"/>
+                    <TextBlock Text="{Binding DateText}" Margin="12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                    <TextBlock Text="{Binding TempAndConditions}" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,6,12,0"/>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+    </phone:PhoneApplicationPage.Resources>
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="{StaticResource ChalkboardBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LoadingStates">
+                <VisualState x:Name="LoadingState"/>
+                <VisualState x:Name="CompletedState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="newsListBox">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="loadingTextBlock">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="progressBar">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="ErrorState">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="progressBar">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(TextBlock.Text)" Storyboard.TargetName="loadingTextBlock">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Error loading news."/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Rectangle Fill="{Binding Settings.ThemeColor1}" Height="10" VerticalAlignment="Top"/>
+        <Rectangle Fill="{Binding Settings.ThemeColor2}" Height="10" VerticalAlignment="Top" Margin="0,10,0,0"/>
+        <Image Source="Resources/bgd_title.png" Stretch="None" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+ 
+        <!--Panorama control-->
+        <controls:Panorama x:Name="panorama">
+        	<controls:Panorama.Title>
+        		<Grid>        			
+        			<Ellipse Width="160" Height="160" Margin="-17,57,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" >
+        				<Ellipse.Fill>
+        					<ImageBrush Stretch="Fill" ImageSource="Resources/logo.jpg"/>
+        				</Ellipse.Fill>
+        			</Ellipse>
+        			<TextBlock Text="{Binding Settings.Name}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="147,3,0,0"/>
+        			<Image Height="155" Source="Resources/border_logo.png" Stretch="Fill" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-8,76,0,0"/>
+				</Grid>
+			</controls:Panorama.Title>
+            <controls:PanoramaItem Header="what's new">
+                <Grid>
+                    <TextBlock x:Name="loadingTextBlock" HorizontalAlignment="Left" Margin="12,12,0,0" TextWrapping="Wrap" Text="Loading news." VerticalAlignment="Top"/>
+                    <ListBox x:Name="newsListBox" Visibility="Collapsed" Margin="0,0,-12,0" ItemsSource="{Binding NewsLinks}" ItemTemplate="{StaticResource LinkDataTemplate}" SelectionChanged="ListBox_SelectionChanged"/>
+                </Grid>
+            </controls:PanoramaItem>
+            
+            <controls:PanoramaItem Header="contacts">
+                <ListBox Margin="12,0,-12,0" ItemsSource="{Binding Contacts}" ItemTemplate="{StaticResource ContactDataTemplate}" />
+            </controls:PanoramaItem>
+ 
+            <controls:PanoramaItem Header="links">
+                <ListBox x:Name="linksListBox" Margin="0,0,-12,0" ItemsSource="{Binding Links}" ItemTemplate="{StaticResource LinkDataTemplate}" SelectionChanged="ListBox_SelectionChanged"/>
+            </controls:PanoramaItem>
+
+            <controls:PanoramaItem Header="athletics">
+                <ListBox x:Name="athleticsListBox" Margin="0,0,-12,0" ItemsSource="{Binding AthleticLinks}" ItemTemplate="{StaticResource LinkDataTemplate}" SelectionChanged="ListBox_SelectionChanged"/>
+            </controls:PanoramaItem>
+
+            <controls:PanoramaItem Header="map">
+                <Grid Margin="12,0">
+                    <Rectangle Fill="{StaticResource Border396Brush}" VerticalAlignment="Top" Height="396"/>
+                    <TextBlock x:Name="mapKeyWarning" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,-137,0,0" TextAlignment="Center"><Run Text="Bing maps key is not set."/><LineBreak/><Run/><LineBreak/><Run Text="Add a key to the Settings.xml file"/><LineBreak/><Run Text="to display a clickable map."/></TextBlock>
+                    <Image x:Name="BingMapImage" MouseLeftButtonDown="BingMapImage_MouseLeftButtonDown" Stretch="None" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0"/>
+                </Grid>
+            </controls:PanoramaItem>
+
+            <controls:PanoramaItem Header="campus map">
+                <Grid Margin="12,0">
+                    <Rectangle Fill="{StaticResource Border396Brush}" VerticalAlignment="Top" Height="396"/>
+                    <Image Source="Resources/campusmap.jpg" Stretch="None" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,0,0"/>                    
+                </Grid>
+            </controls:PanoramaItem>
+
+            <controls:PanoramaItem Header="weather">
+                <ListBox Margin="12,0,-12,0" ItemsSource="{Binding Forecasts}"  ItemTemplate="{StaticResource WeatherDataTemplate}" />
+            </controls:PanoramaItem>
+        </controls:Panorama>
+        <toolkit:PerformanceProgressBar x:Name="progressBar" VerticalAlignment="Top" IsIndeterminate="True"/>
+    </Grid>
+ 
+    <!--Panorama-based applications should not show an ApplicationBar-->
+
+</phone:PhoneApplicationPage>

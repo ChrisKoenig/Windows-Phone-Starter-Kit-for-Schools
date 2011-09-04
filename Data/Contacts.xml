@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Copyright (c) 2011 Microsoft Corporation.  All rights reserved.
+    Use of this sample source code is subject to the terms of the Microsoft license
+    agreement under which you licensed this sample source code and is provided AS-IS.
+    If you did not accept the terms of the license agreement, you are not authorized
+    to use this sample source code.  For the terms of the license, please see the
+    license agreement between you and Microsoft.
+-->
+<contacts>
+  <contact>
+    <name>Library</name>
+    <photoUrl>/Resources/Content/library.jpg</photoUrl>
+    <email>library@contoso.edu</email>
+    <phoneNumber>555.891.2168</phoneNumber>
+  </contact>
+  <contact>
+    <name>Admissions</name>
+    <photoUrl>/Resources/Content/admissions.jpg</photoUrl>
+    <email>admissions@contoso.edu</email>
+    <phoneNumber>555.523.2354</phoneNumber>
+  </contact>
+  <contact>
+    <name>Financial Aid</name>
+    <photoUrl>/Resources/Content/money.jpg</photoUrl>
+    <email>finaid@contoso.edu</email>
+    <phoneNumber>555.891.3441</phoneNumber>
+  </contact>
+  <contact>
+    <name>Career Services</name>
+    <photoUrl>/Resources/Content/cfa.JPG</photoUrl>
+    <email>ccsinfo@contoso.edu</email>
+    <phoneNumber>555.891.2164</phoneNumber>
+  </contact>
+  <contact>
+    <name>Systems</name>
+    <photoUrl>/Resources/Content/technology.jpg</photoUrl>
+    <email></email>
+    <phoneNumber>555.891.2911</phoneNumber>
+  </contact>
+</contacts>

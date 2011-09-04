@@ -1,0 +1,45 @@
+﻿<local:MainViewModel 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"       
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:MySchoolApp">
+    <local:MainViewModel.Settings>
+        <local:Settings Name="my school" NameToUpper="MY SCHOOL"  ThemeColor1="#3d7cc1" ThemeColor2="#ccff00" />
+    </local:MainViewModel.Settings>
+    <local:MainViewModel.NewsLinks>
+        <local:Link Title="News Link Title 1" />
+        <local:Link Title="News Link Title 2 showing wrapping behavior" />
+        <local:Link Title="News Link Title 3" />
+        <local:Link Title="News Link Title 4" />
+        <local:Link Title="News Link Title 5" />
+    </local:MainViewModel.NewsLinks>
+    <local:MainViewModel.Contacts>
+        <local:Contact Name="Library" Email="library@contoso.edu" PhoneNumber="555.891.2168" PhotoUrl="/Resources/Content/library.jpg" />
+        <local:Contact Name="Admissions" Email="admissions@contoso.edu" PhoneNumber="555.523.2354" PhotoUrl="/Resources/Content/admissions.jpg" />
+        <local:Contact Name="Finances" Email="finaid@contoso.edu" PhoneNumber="555.891.3441" PhotoUrl="/Resources/Content/money.jpg" />
+    </local:MainViewModel.Contacts>
+    <local:MainViewModel.Links>
+        <local:Link Title="Link Title 1" />
+        <local:Link Title="Link Title 2 showing wrapping behavior" />
+        <local:Link Title="Link Title 3" />
+        <local:Link Title="Link Title 4" />
+        <local:Link Title="Link Title 5" />
+    </local:MainViewModel.Links>
+    <local:MainViewModel.AthleticLinks>
+        <local:Link Title="Athletics Link Title 1" />
+        <local:Link Title="Athletics Link Title 2 showing wrapping behavior" />
+        <local:Link Title="Athletics Link Title 3" />
+        <local:Link Title="Athletics Link Title 4" />
+        <local:Link Title="Athletics Link Title 5" />
+    </local:MainViewModel.AthleticLinks>
+    <local:MainViewModel.SelectedLink>
+        <local:Link Title="App Hub" Url="http://create.msdn.com" />
+    </local:MainViewModel.SelectedLink>
+    <local:MainViewModel.SelectedFeedItem>
+        <local:Link Title=".toolBox" Url="http://microsoft.com/design/toolbox/" />
+    </local:MainViewModel.SelectedFeedItem>
+    <local:MainViewModel.Forecasts>
+        <local:Forecast TempAndConditions="55 and Partly Sunny" DateText="April 29" Name="This Afternoon" ImageUrl="http://www.nws.noaa.gov/weather/images/fcicons/bkn.jpg" />
+        <local:Forecast TempAndConditions="42 and Mostly Cloudy" DateText="April 29" Name="Tonight" ImageUrl="http://www.nws.noaa.gov/weather/images/fcicons/nbkn.jpg" />
+        <local:Forecast TempAndConditions="56 and Sunny" DateText="April 30" Name="Wednesday Night" ImageUrl="http://www.nws.noaa.gov/weather/images/fcicons/few.jpg" />
+    </local:MainViewModel.Forecasts>
+</local:MainViewModel>

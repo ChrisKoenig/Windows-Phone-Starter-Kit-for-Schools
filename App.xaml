@@ -1,0 +1,26 @@
+﻿<Application 
+    x:Class="MySchoolApp.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!--Application Resources-->
+    <Application.Resources>       
+    	<DataTemplate x:Key="LinkDataTemplate">            
+    		<TextBlock Text="{Binding Title}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="12,-3,12,58" LineHeight="43" LineStackingStrategy="BlockLineHeight"/>            
+    	</DataTemplate>
+    	<ImageBrush x:Key="Border100Brush" Stretch="Fill" ImageSource="Resources/border_100.png"/>
+        <ImageBrush x:Key="Border396Brush" Stretch="None" ImageSource="Resources/border_396.png"/>
+    	<ImageBrush x:Key="ChalkboardBrush" Stretch="Fill" ImageSource="/Resources/bgd.jpg"/>
+    </Application.Resources>
+
+    <Application.ApplicationLifetimeObjects>
+        <!--Required object that handles lifetime events for the application-->
+        <shell:PhoneApplicationService 
+            Launching="Application_Launching" Closing="Application_Closing" 
+            Activated="Application_Activated" Deactivated="Application_Deactivated"/>
+    </Application.ApplicationLifetimeObjects>
+
+</Application>

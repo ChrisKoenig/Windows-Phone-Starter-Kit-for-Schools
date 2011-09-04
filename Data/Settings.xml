@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Copyright (c) 2011 Microsoft Corporation.  All rights reserved.
+    Use of this sample source code is subject to the terms of the Microsoft license
+    agreement under which you licensed this sample source code and is provided AS-IS.
+    If you did not accept the terms of the license agreement, you are not authorized
+    to use this sample source code.  For the terms of the license, please see the
+    license agreement between you and Microsoft.
+-->
+<settings>
+  <name>contoso university</name>
+  <themeColor1>#3d7cc1</themeColor1>
+  <themeColor2>#ccff00</themeColor2>
+  <newsUrl>http://blogs.msdn.com/b/mainfeed.aspx?Type=BlogsOnly</newsUrl>
+  <bingMapsKey></bingMapsKey>
+  <locations>
+    <location title="Campus Fountain" latitude="47.653753112267744" longitude="-122.30778694152832" />
+    <location title="Football Stadium" latitude="47.65054420627862" longitude="-122.30268001556396" />
+    <location title="Marine Sciences Bldg" latitude="47.64992263863015" longitude="-122.3128080368042" />
+    <location title="Guide Hall" latitude="47.653810928585294" longitude="-122.31106996536255" />
+  </locations>
+</settings>
