@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Deployment xmlns="http://schemas.microsoft.com/windowsphone/2009/deployment" AppPlatformVersion="7.0">
+<Deployment xmlns="http://schemas.microsoft.com/windowsphone/2009/deployment" AppPlatformVersion="7.1">
   <App xmlns="" ProductID="{2946712f-0c69-46bb-b859-38791e1c46fc}" Title="MySchoolApp" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="MySchoolApp author" Description="Sample description" Publisher="MySchoolApp">
     <IconPath IsRelative="true" IsResource="false">ApplicationIcon.png</IconPath>
     <Capabilities>
