@@ -33,6 +33,7 @@ namespace MySchoolApp
 
             DataContext = App.ViewModel;
             App.ViewModel.NewsUpdated += ViewModel_NewsUpdated;
+            App.ViewModel.LoadData();
 
             resetListBoxes();
 

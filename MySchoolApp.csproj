@@ -131,7 +131,9 @@
     <Resource Include="Toolkit.Content\ApplicationBar.Delete.png" />
     <Resource Include="Toolkit.Content\ApplicationBar.Select.png" />
     <Resource Include="Data\Contacts.xml" />
-    <Resource Include="Data\Links.xml" />
+    <Resource Include="Data\Links.xml">
+      <SubType>Designer</SubType>
+    </Resource>
     <Resource Include="Data\Settings.xml">
       <SubType>Designer</SubType>
     </Resource>

@@ -85,7 +85,7 @@ namespace MySchoolApp
         {
             if (!App.ViewModel.IsDataLoaded)
             {
-                App.ViewModel.LoadData();
+                //App.ViewModel.LoadData();
             }
         }
 
@@ -95,7 +95,7 @@ namespace MySchoolApp
         {
             if (!App.ViewModel.IsDataLoaded)
             {
-                App.ViewModel.LoadData();
+                //App.ViewModel.LoadData();
             }
         }
 
