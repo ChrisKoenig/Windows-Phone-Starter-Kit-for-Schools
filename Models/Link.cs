@@ -11,38 +11,12 @@ using System;
 
 namespace MySchoolApp
 {
-    public class Link : ModelBase
+    public class Link
     {
-        private string title;
-
-        public string Title
-        {
-            get { return title; }
-            set
-            {
-                if (title == value) return;
-                title = value;
-                RaisePropertyChanged("Title");
-            }
-        }
-
-        private string url;
-
-        public string Url
-        {
-            get { return url; }
-            set
-            {
-                if (url == value) return;
-                url = value;
-                RaisePropertyChanged("Url");
-            }
-        }
+        public string Title { get; set; }
 
         public bool IsRss { get; set; }
 
-        public Link()
-        {
-        }
+        public string Url { get; set; }
     }
 }

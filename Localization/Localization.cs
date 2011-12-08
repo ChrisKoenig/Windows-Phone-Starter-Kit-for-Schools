@@ -8,26 +8,19 @@
 //
 //
 using System;
-using System.Collections.Generic;
-using System.Windows.Media;
 
-namespace MySchoolApp
+namespace MySchoolApp.Localization
 {
-    public class Settings
+    public class Localization
     {
-        public string Name { get; set; }
+        private readonly static AppResources localizedresources = new AppResources();
 
-        public string NewsUrl { get; set; }
-
-        public string BingMapsKey { get; set; }
-
-        public SolidColorBrush ThemeColor1 { get; set; }
-
-        public SolidColorBrush ThemeColor2 { get; set; }
-
-        public string NameToUpper
+        public AppResources Localizedresources
         {
-            get { return Name.ToUpper(); }
+            get
+            {
+                return localizedresources;
+            }
         }
     }
 }

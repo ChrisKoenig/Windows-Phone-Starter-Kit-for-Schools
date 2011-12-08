@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Copyright (c) 2011 Microsoft Corporation.  All rights reserved.
+    Use of this sample source code is subject to the terms of the Microsoft license
+    agreement under which you licensed this sample source code and is provided AS-IS.
+    If you did not accept the terms of the license agreement, you are not authorized
+    to use this sample source code.  For the terms of the license, please see the
+    license agreement between you and Microsoft.
+-->
+<clubs>
+  <club>
+    <url>http://contosouniversity.net</url>
+    <title>Student Union</title>
+    <subtitle>Food, fellowship and fun</subtitle>
+  </club>
+  <club>
+    <url>http://contosouniversity.net</url>
+    <title>Robotics Club</title>
+    <subtitle>harder, better, stronger</subtitle>
+  </club>
+  <club>
+    <url>http://contosouniversity.net</url>
+    <title>Football &amp; Beer</title>
+    <subtitle>watch every game in style</subtitle>
+  </club>
+  <club>
+    <url>http://contosouniversity.net</url>
+    <title>Recreational Sports</title>
+    <subtitle>Intramurals, Club Sports and Drop-in Athletics</subtitle>
+  </club>
+  <club>
+    <url>http://contosouniversity.net</url>
+    <title>Alpha Phi Omega</title>
+    <subtitle>A non-Greek-affiliated co-ed service fraternity</subtitle>
+  </club>
+</clubs>

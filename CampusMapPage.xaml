@@ -1,0 +1,36 @@
+﻿<phone:PhoneApplicationPage 
+    x:Class="MySchoolApp.CampusMapPage" x:Name="pageImage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="PortraitOrLandscape" Orientation="Portrait"
+    mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="480"
+    shell:SystemTray.IsVisible="False">
+
+   
+
+    <Grid x:Name="LayoutRoot">
+      
+        <Image x:Name="MyImage" Source="Resources/campusmap.jpg">
+            <Image.RenderTransform>
+                <CompositeTransform x:Name="transform" />
+            </Image.RenderTransform>
+            <toolkit:GestureService.GestureListener>
+                <toolkit:GestureListener  DragDelta="OnGestureListenerDragDelta"
+                                          PinchStarted="OnGestureListenerPinchStarted"
+                                         PinchDelta="OnGestureListenerPinchDelta"
+                                         PinchCompleted="OnGestureListenerPinchCompleted"
+                                       />
+            </toolkit:GestureService.GestureListener>
+        </Image>
+    
+    </Grid>
+
+</phone:PhoneApplicationPage>

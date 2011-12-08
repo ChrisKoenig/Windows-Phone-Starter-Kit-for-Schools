@@ -8,26 +8,19 @@
 //
 //
 using System;
-using System.Collections.Generic;
-using System.Windows.Media;
 
 namespace MySchoolApp
 {
-    public class Settings
+    public class CurrentForecast
     {
-        public string Name { get; set; }
+        public string Conditions { get; set; }
 
-        public string NewsUrl { get; set; }
+        public string Wind { get; set; }
 
-        public string BingMapsKey { get; set; }
+        public string Humidity { get; set; }
 
-        public SolidColorBrush ThemeColor1 { get; set; }
+        public string Temperature { get; set; }
 
-        public SolidColorBrush ThemeColor2 { get; set; }
-
-        public string NameToUpper
-        {
-            get { return Name.ToUpper(); }
-        }
+        public string ImageUrl { get; set; }
     }
 }

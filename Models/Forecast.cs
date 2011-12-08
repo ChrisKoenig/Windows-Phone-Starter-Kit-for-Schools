@@ -11,81 +11,16 @@ using System;
 
 namespace MySchoolApp
 {
-    public class Forecast : ModelBase
+    public class Forecast
     {
-        private string name;
+        public int LowTemperature { get; set; }
 
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                if (name == value) return;
-                name = value;
-                RaisePropertyChanged("Name");
-            }
-        }
+        public int HighTemperature { get; set; }
 
-        private DateTime date;
+        public string Conditions { get; set; }
 
-        public DateTime Date
-        {
-            get { return date; }
-            set
-            {
-                if (date == value) return;
-                date = value;
-                RaisePropertyChanged("Date");
-            }
-        }
+        public string ImageUrl { get; set; }
 
-        private int temperature;
-
-        public int Temperature
-        {
-            get { return temperature; }
-            set
-            {
-                if (temperature == value) return;
-                temperature = value;
-                RaisePropertyChanged("Temperature");
-            }
-        }
-
-        private string conditions;
-
-        public string Conditions
-        {
-            get { return conditions; }
-            set
-            {
-                if (conditions == value) return;
-                conditions = value;
-                RaisePropertyChanged("Conditions");
-            }
-        }
-
-        private string imageUrl;
-
-        public string ImageUrl
-        {
-            get { return imageUrl; }
-            set
-            {
-                if (imageUrl == value) return;
-                imageUrl = value;
-                RaisePropertyChanged("ImageUrl");
-            }
-        }
-
-        public string TempAndConditions
-        {
-            get { return string.Format("{0} and {1}", Temperature, Conditions); }
-        }
-
-        public string DateText
-        {
-            get { return Date.ToString("m"); }
-        }
+        public string Name { get; set; }
     }
 }

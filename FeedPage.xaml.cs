@@ -36,81 +36,41 @@ namespace MySchoolApp
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
-            DataContext = App.ViewModel;
-
-            if (this.State.ContainsKey("selectedLink"))
+            if (e.NavigationMode == NavigationMode.New)
             {
-                App.ViewModel.SelectedLink = this.State["selectedLink"] as Link;
+                String uri = null;
+                NavigationContext.QueryString.TryGetValue("uri", out uri);
+                var feedVM = new FeedViewModel() { Uri = uri };
+                DataContext = feedVM;
             }
-
-            setupFeed();
+            else
+            {
+                var feedvm=(FeedViewModel)DataContext;
+                if(!feedvm.FeedLinks.Any())
+                    feedvm.LoadFeed();
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
 
-            if (App.CurrentNavigationMode != NavigationMode.Back)
-            {
-                this.State["selectedLink"] = App.ViewModel.SelectedLink;
-            }
         }
 
         private void feedListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
             {
-                App.ViewModel.SelectedFeedItem = (Link)e.AddedItems[0];
+                var link = (Link)e.AddedItems[0];
 
-                WebBrowserTask wbt = new WebBrowserTask();
-                wbt.URL = App.ViewModel.SelectedFeedItem.Url;
+                var wbt = new WebBrowserTask();
+                wbt.Uri = new Uri(link.Url, UriKind.Absolute);
                 wbt.Show();
             }
         }
 
-        private void setupFeed()
-        {
-            //init feedClient
-            if (feedClient == null)
-            {
-                feedClient = new WebClient();
-                feedClient.DownloadStringCompleted += feedClient_DownloadStringCompleted;
-            }
 
-            //check if network and client are available
-            if (NetworkInterface.GetIsNetworkAvailable() && !feedClient.IsBusy)
-            {
-                feedClient.DownloadStringAsync(new Uri(App.ViewModel.SelectedLink.Url, UriKind.Absolute));
-            }
-            else
-            {
-                //notify user
-                VisualStateManager.GoToState(this, "ErrorState", true);
-            }
-        }
 
-        private void feedClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            if (e.Error == null)
-            {
-                try
-                {
-                    //ensure FeedLinks is empty
-                    App.ViewModel.FeedLinks.Clear();
 
-                    List<Link> links = App.ViewModel.GetLinksFromFeed(e.Result);
-
-                    links.ForEach(x => App.ViewModel.FeedLinks.Add(x));
-
-                    //show feed items
-                    VisualStateManager.GoToState(this, "CompletedState", true);
-                }
-                catch (Exception ex)
-                {
-                    VisualStateManager.GoToState(this, "ErrorState", true);
-                }
-            }
-        }
     }
 }

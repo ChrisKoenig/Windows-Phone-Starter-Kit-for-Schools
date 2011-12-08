@@ -8,22 +8,15 @@
 //
 //
 using System;
-using System.ComponentModel;
 
 namespace MySchoolApp
 {
-    public abstract class ModelBase : INotifyPropertyChanged
+    public class Club
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public string Title { get; set; }
 
-        protected void RaisePropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-        }
+        public string Url { get; set; }
 
-        public ModelBase()
-        {
-        }
+        public string Subtitle { get; set; }
     }
 }

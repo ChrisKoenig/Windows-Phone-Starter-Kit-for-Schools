@@ -10,9 +10,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
@@ -30,43 +30,23 @@ namespace MySchoolApp
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
             DataContext = App.ViewModel;
-            App.ViewModel.NewsUpdated += ViewModel_NewsUpdated;
-            App.ViewModel.LoadData();
-
-            resetListBoxes();
-
             setMapImage();
         }
 
-        private void ViewModel_NewsUpdated(object sender, NewsUpdatedEventArgs e)
+        protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
         {
-            if (e.Message == "ok")
+            base.OnBackKeyPress(e);
+            if (ContactSelection.Visibility == Visibility.Visible)
             {
-                VisualStateManager.GoToState(this, "CompletedState", true);
+                e.Cancel = true;
+                ContactSelection.Visibility = Visibility.Collapsed;
             }
-            else
-            {
-                VisualStateManager.GoToState(this, "ErrorState", true);
-            }
-        }
-
-        private void resetListBoxes()
-        {
-            // selected indexes are set back to -1 to support
-            // selecting a link that has already been selected
-            //
-            // this happens when a link is selected, which opens a new page
-            // then when the back button is pressed, main page is reloaded in its current state
-            // if the index is not reset, a user will not be able to reselect the link just opened
-            linksListBox.SelectedIndex = -1;
-            athleticsListBox.SelectedIndex = -1;
         }
 
         private void setMapImage()
         {
-            string mapUrl = App.ViewModel.Settings.GetBingStaticMapUrl();
+            string mapUrl = App.ViewModel.BingStaticMapUrl;
 
             //check to see if there is at least one location and a BingMapsKey
             if (!string.IsNullOrEmpty(mapUrl) && !string.IsNullOrEmpty(App.ViewModel.Settings.BingMapsKey))
@@ -76,52 +56,102 @@ namespace MySchoolApp
             }
         }
 
-        private void EmailTextBlock_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void LinkListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is TextBlock)
-            {
-                string emailAddress = ((TextBlock)sender).Text;
+            if (e.AddedItems.Count == 0)
+                return;
 
-                EmailComposeTask ect = new EmailComposeTask();
-                ect.To = emailAddress;
-                ect.Show();
+            var link = (Link)e.AddedItems[0];
+            ((ListBox)sender).SelectedItem = null;
+
+            if (link.IsRss)
+            {
+                NavigationService.Navigate(new Uri(String.Format("/FeedPage.xaml?uri={0}", HttpUtility.UrlEncode(link.Url)), UriKind.Relative));
+            }
+            else
+            {
+                var wbt = new WebBrowserTask();
+                wbt.Uri = new Uri(link.Url, UriKind.Absolute);
+                wbt.Show();
             }
         }
 
-        private void PhoneTextBlock_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void ClubsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is TextBlock)
-            {
-                string phoneNumber = ((TextBlock)sender).Text;
+            if (e.AddedItems.Count == 0)
+                return;
 
-                PhoneCallTask pct = new PhoneCallTask();
-                pct.PhoneNumber = phoneNumber;
-                pct.Show();
-            }
+            var club = (Club)e.AddedItems[0];
+            ((ListBox)sender).SelectedItem = null;
+
+            var wbt = new WebBrowserTask();
+            wbt.Uri = new Uri(club.Url, UriKind.Absolute);
+            wbt.Show();
         }
 
-        private void BingMapImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Contacts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            NavigationService.Navigate(new Uri("/MapPage.xaml", UriKind.Relative));
-        }
+            if (e.AddedItems.Count == 0)
+                return;
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count > 0)
+            var contact = e.AddedItems[0] as Contact;
+
+            if (!String.IsNullOrEmpty(contact.Email))
             {
-                App.ViewModel.SelectedLink = (Link)e.AddedItems[0];
-
-                if (App.ViewModel.SelectedLink.IsRss)
+                if (!String.IsNullOrEmpty(contact.PhoneNumber))
                 {
-                    NavigationService.Navigate(new Uri("/FeedPage.xaml", UriKind.Relative));
+                    ShowContactSelection(contact);
                 }
                 else
                 {
-                    WebBrowserTask wbt = new WebBrowserTask();
-                    wbt.URL = App.ViewModel.SelectedLink.Url;
-                    wbt.Show();
+                    EmailComposeTask ect = new EmailComposeTask();
+                    ect.To = contact.Email;
+                    ect.Show();
                 }
             }
+            else
+            {
+                if (!String.IsNullOrEmpty(contact.PhoneNumber))
+                {
+                    PhoneCallTask pct = new PhoneCallTask();
+                    pct.PhoneNumber = contact.PhoneNumber;
+                    pct.Show();
+                }
+            }
+
+            ((ListBox)sender).SelectedItem = null;
+        }
+
+        private void ShowContactSelection(Contact contact)
+        {
+            ContactSelection.DataContext = contact;
+            StoryboardShowContactSelection.Begin();
+        }
+
+        private void ContactSelectionPhone_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var contact = ((FrameworkElement)sender).DataContext as Contact;
+            PhoneCallTask pct = new PhoneCallTask();
+            pct.PhoneNumber = contact.PhoneNumber;
+            pct.Show();
+        }
+
+        private void ContactSelectionEmail_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var contact = ((FrameworkElement)sender).DataContext as Contact;
+            EmailComposeTask ect = new EmailComposeTask();
+            ect.To = contact.Email;
+            ect.Show();
+        }
+
+        private void CampusMap_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new Uri("/CampusMapPage.xaml", UriKind.Relative));
+        }
+
+        private void Map_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new Uri("/MapPage.xaml", UriKind.Relative));
         }
     }
 }

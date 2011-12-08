@@ -9,91 +9,41 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Resources;
 using System.Xml.Linq;
 using Microsoft.Phone.Net.NetworkInformation;
+using MySchoolApp.Helpers;
 
 namespace MySchoolApp
 {
     public class MainViewModel : ViewModelBase
     {
-        #region Constructor
-
-        public MainViewModel()
-        {
-            this.NewsLinks = new ObservableCollection<Link>();
-            this.Contacts = new ObservableCollection<Contact>();
-            this.Links = new ObservableCollection<Link>();
-            this.AthleticLinks = new ObservableCollection<Link>();
-            this.FeedLinks = new ObservableCollection<Link>();
-            this.Forecasts = new ObservableCollection<Forecast>();
-        }
-
-        #endregion Constructor
-
         #region Properties
 
-        public ObservableCollection<Link> NewsLinks { get; private set; }
+        public List<Link> NewsLinks { get; private set; }
 
-        public ObservableCollection<Contact> Contacts { get; private set; }
+        public List<Contact> Contacts { get; private set; }
 
-        public ObservableCollection<Link> Links { get; private set; }
+        public List<Link> Links { get; private set; }
 
-        public ObservableCollection<Link> AthleticLinks { get; private set; }
+        public List<Link> Athletics { get; private set; }
 
-        public ObservableCollection<Link> FeedLinks { get; set; }
+        public List<Club> Clubs { get; private set; }
 
-        public ObservableCollection<Forecast> Forecasts { get; private set; }
+        public List<Forecast> Forecasts { get; private set; }
 
-        private Link selectedLink;
+        public CurrentForecast CurrentForecast { get; private set; }
 
-        public Link SelectedLink
-        {
-            get { return selectedLink; }
-            set
-            {
-                if (selectedLink == value) return;
-                selectedLink = value;
-                RaisePropertyChanged("SelectedLink");
-            }
-        }
+        public Settings Settings { get; set; }
 
-        private Link selectedFeedItem;
+        public LoadingState LoadingState { get; set; }
 
-        public Link SelectedFeedItem
-        {
-            get { return selectedFeedItem; }
-            set
-            {
-                if (selectedFeedItem == value) return;
-                selectedFeedItem = value;
-                RaisePropertyChanged("SelectedFeedItem");
-            }
-        }
-
-        private Settings settings = new Settings();
-
-        public Settings Settings
-        {
-            get
-            {
-                return settings;
-            }
-            set
-            {
-                if (value != settings)
-                {
-                    settings = value;
-                    RaisePropertyChanged("Settings");
-                }
-            }
-        }
+        public List<Location> Locations { get; set; }
 
         public bool IsDataLoaded
         {
@@ -103,50 +53,50 @@ namespace MySchoolApp
 
         #endregion Properties
 
-        #region Public Methods
-
         public void LoadData()
         {
             loadSettings();
-
+            loadLocations();
             loadNews();
-
             loadContacts();
-
             loadLinks();
-
+            loadClubs();
             loadWeather();
-
-            this.IsDataLoaded = true;
+            loadAthletics();
+            IsDataLoaded = true;
         }
 
-        public List<Link> GetLinksFromFeed(string xmlString)
+        #region Locations
+
+        private void loadLocations()
         {
-            //
-            // this routine supports most RSS 2.0 and RDF feeds
-            //
-            List<Link> links = null;
-
-            //try to parse result as rss feed
-            XDocument doc = XDocument.Parse(xmlString);
-
-            //grab default namespace
-            XNamespace xName = doc.Root.GetDefaultNamespace();
-
-            //parse items
-            links = (from item in doc.Descendants(xName + "item")
-                     select new Link
-                     {
-                         Title = item.Element(xName + "title").Value,
-                         Url = item.Element(xName + "link").Value.ToString()
-                     }).ToList<Link>();
-
-            return links;
+            StreamResourceInfo xml = Application.GetResourceStream(new Uri("/MySchoolApp;component/Data/Locations.xml", UriKind.Relative));
+            NumberFormatInfo nfi = new NumberFormatInfo() { NumberDecimalSeparator = "." };
+            var elems = XElement.Load(xml.Stream).Elements("location");
+            Locations = (from item in elems
+                         select new Location
+                         {
+                             Latitude = double.Parse(item.Attribute("latitude").Value, nfi),
+                             Longitude = double.Parse(item.Attribute("longitude").Value, nfi),
+                             Title = item.Attribute("title").Value
+                         }).ToList();
+            RaisePropertyChanged("Locations");
         }
 
-        #endregion Public Methods
+        public string BingStaticMapUrl
+        {
+            get
+            {
+                NumberFormatInfo nfi = new NumberFormatInfo() { NumberDecimalSeparator = "." };
 
-        #region Private Methods
+                if (Locations.Count > 0)
+                    return string.Format("http://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/15?mapSize=376,200&pp={0},{1};21&mapVersion=v1&key={2}", Locations[0].Latitude.ToString(nfi), Locations[0].Longitude.ToString(nfi), Settings.BingMapsKey);
+                else
+                    return string.Empty;
+            }
+        }
+
+        #endregion Locations
 
         #region Settings
 
@@ -155,58 +105,14 @@ namespace MySchoolApp
             StreamResourceInfo xml = Application.GetResourceStream(new Uri("/MySchoolApp;component/Data/Settings.xml", UriKind.Relative));
             XDocument settingsDoc = XDocument.Load(xml.Stream);
 
-            this.Settings.Name = settingsDoc.Root.Element("name").Value;
-            this.Settings.NewsUrl = settingsDoc.Root.Element("newsUrl").Value;
-            this.Settings.BingMapsKey = settingsDoc.Root.Element("bingMapsKey").Value;
-            this.Settings.ThemeColor1 = getColorFromRGB(settingsDoc.Root.Element("themeColor1").Value);
-            this.Settings.ThemeColor2 = getColorFromRGB(settingsDoc.Root.Element("themeColor2").Value);
-            loadLocations(settingsDoc.Root.Element("locations").Descendants("location"));
-        }
-
-        private void loadLocations(IEnumerable<XElement> locations)
-        {
-            if (locations != null)
+            Settings = new Settings()
             {
-                Location loc = null;
-                foreach (XElement item in locations)
-                {
-                    loc = new Location();
-                    loc.Title = item.Attribute("title").Value;
-                    loc.Latitude = (double)item.Attribute("latitude");
-                    loc.Longitude = (double)item.Attribute("longitude");
-                    Settings.Locations.Add(loc);
-                }
-            }
-        }
-
-        private SolidColorBrush getColorFromRGB(string argb)
-        {
-            try
-            {
-                if (argb.StartsWith("#"))
-                {
-                    argb = argb.Substring(1);
-                }
-
-                //add alpha value if not set
-                if (argb.Length == 6)
-                {
-                    argb = "FF" + argb;
-                }
-
-                //set to red if string length is not correct
-                if (argb.Length != 8)
-                {
-                    return new SolidColorBrush(Colors.Red);
-                }
-
-                return new SolidColorBrush(Color.FromArgb(System.Convert.ToByte(argb.Substring(0, 2), 16), System.Convert.ToByte(argb.Substring(2, 2), 16), System.Convert.ToByte(argb.Substring(4, 2), 16), System.Convert.ToByte(argb.Substring(6, 2), 16)));
-            }
-            catch (Exception ex)
-            {
-                //set to red if exception thrown while parsing color string
-                return new SolidColorBrush(Colors.Red);
-            }
+                Name = settingsDoc.Root.Element("name").Value,
+                NewsUrl = settingsDoc.Root.Element("newsUrl").Value,
+                BingMapsKey = settingsDoc.Root.Element("bingMapsKey").Value,
+                ThemeColor1 = Utils.GetColorFromRGB(settingsDoc.Root.Element("themeColor1").Value),
+                ThemeColor2 = Utils.GetColorFromRGB(settingsDoc.Root.Element("themeColor2").Value)
+            };
         }
 
         #endregion Settings
@@ -215,61 +121,42 @@ namespace MySchoolApp
 
         private void loadNews()
         {
+            LoadingState = MySchoolApp.LoadingState.LOADING;
+            RaisePropertyChanged("LoadingState");
+
             //check if network and client are available and newsurl exists
             if (NetworkInterface.GetIsNetworkAvailable() && !string.IsNullOrEmpty(App.ViewModel.Settings.NewsUrl))
             {
                 string url = App.ViewModel.Settings.NewsUrl;
 
                 var request = HttpWebRequest.Create(url);
-                var result = (IAsyncResult)request.BeginGetResponse(loadNewsCallback, request);
-            }
-            else
-            {
-                //notify user
-                OnNewsUpdated(new NewsUpdatedEventArgs() { Message = "error" });
-            }
-        }
-
-        private void loadNewsCallback(IAsyncResult result)
-        {
-            try
-            {
-                var request = (HttpWebRequest)result.AsyncState;
-                var response = request.EndGetResponse(result);
-
-                using (var stream = response.GetResponseStream())
-                using (var reader = new StreamReader(stream))
+                var result = (IAsyncResult)request.BeginGetResponse((iar) =>
                 {
-                    string contents = reader.ReadToEnd();
-
-                    Deployment.Current.Dispatcher.BeginInvoke(() =>
+                    try
                     {
-                        loadNewsCompleted(contents);
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                OnNewsUpdated(new NewsUpdatedEventArgs() { Message = "error" });
-            }
-        }
+                        var response = request.EndGetResponse(iar);
 
-        private void loadNewsCompleted(string results)
-        {
-            try
-            {
-                //ensure NewsLinks is empty
-                App.ViewModel.NewsLinks.Clear();
+                        using (var stream = response.GetResponseStream())
+                        using (var reader = new StreamReader(stream))
+                        {
+                            string contents = reader.ReadToEnd();
 
-                List<Link> links = App.ViewModel.GetLinksFromFeed(results);
+                            Deployment.Current.Dispatcher.BeginInvoke(() =>
+                            {
+                                NewsLinks = Utils.GetLinksFromFeed(contents);
 
-                links.ForEach(x => App.ViewModel.NewsLinks.Add(x));
-
-                OnNewsUpdated(new NewsUpdatedEventArgs() { Message = "ok" });
-            }
-            catch (Exception ex)
-            {
-                OnNewsUpdated(new NewsUpdatedEventArgs() { Message = "error" });
+                                LoadingState = MySchoolApp.LoadingState.COMPLETED;
+                                RaisePropertyChanged("LoadingState");
+                                RaisePropertyChanged("NewsLinks");
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        LoadingState = LoadingState.ERROR;
+                        RaisePropertyChanged("LoadingState");
+                    }
+                }, null);
             }
         }
 
@@ -282,16 +169,15 @@ namespace MySchoolApp
             StreamResourceInfo xml = Application.GetResourceStream(new Uri("/MySchoolApp;component/Data/Contacts.xml", UriKind.Relative));
             XDocument contactsDoc = XDocument.Load(xml.Stream);
 
-            List<Contact> cItems = (from item in contactsDoc.Descendants("contact")
-                                    select new Contact
-                                    {
-                                        Name = item.Element("name").Value.ToString(),
-                                        Email = item.Element("email").Value.ToString(),
-                                        PhotoUrl = item.Element("photoUrl").Value.ToString(),
-                                        PhoneNumber = item.Element("phoneNumber").Value.ToString()
-                                    }).ToList<Contact>();
-
-            cItems.ForEach(x => Contacts.Add(x));
+            Contacts = (from item in contactsDoc.Descendants("contact")
+                        select new Contact
+                        {
+                            Name = item.Element("name").Value.ToString(),
+                            Email = item.Element("email").Value.ToString(),
+                            PhotoUrl = item.Element("photoUrl").Value.ToString(),
+                            PhoneNumber = item.Element("phoneNumber").Value.ToString()
+                        }).ToList<Contact>();
+            RaisePropertyChanged("Contacts");
         }
 
         #endregion Contacts
@@ -300,168 +186,117 @@ namespace MySchoolApp
 
         private void loadLinks()
         {
-            parseLinkFile("/Data/Links.xml").ForEach(x => Links.Add(x));
-
-            parseLinkFile("/Data/Athletics.xml").ForEach(x => AthleticLinks.Add(x));
+            Links = parseLinkFile("/Data/Links.xml");
+            RaisePropertyChanged("Links");
         }
 
         private List<Link> parseLinkFile(string resourcePath)
         {
             StreamResourceInfo xml = Application.GetResourceStream(new Uri("/MySchoolApp;component" + resourcePath, UriKind.Relative));
-            XDocument linksDoc = XDocument.Load(xml.Stream);
 
-            List<Link> lItems = (from item in linksDoc.Descendants("link")
-                                 select new Link
-                                 {
-                                     Title = item.Element("title").Value.ToString(),
-                                     Url = item.Element("url").Value.ToString(),
-                                     IsRss = item.Attribute("isRSS") != null
-                                 }).ToList<Link>();
+            return (from item in XElement.Load(xml.Stream).Elements("link")
+                    select new Link
+                    {
+                        Title = item.Element("title").Value.ToString(),
+                        Url = item.Element("url").Value.ToString(),
+                        IsRss = item.Attribute("isRSS") != null
+                    }).ToList<Link>();
+        }
 
-            return lItems;
+        private void loadAthletics()
+        {
+            Athletics = parseLinkFile("/Data/Athletics.xml");
+            RaisePropertyChanged("Athletics");
         }
 
         #endregion Links
+
+        #region Clubs
+
+        private void loadClubs()
+        {
+            StreamResourceInfo xml = Application.GetResourceStream(new Uri("/MySchoolApp;component/Data/Clubs.xml", UriKind.Relative));
+
+            Clubs = (from item in XElement.Load(xml.Stream).Elements("club")
+                     select new Club
+                     {
+                         Title = item.Element("title").Value,
+                         Url = item.Element("url").Value,
+                         Subtitle = item.Element("subtitle").Value,
+                     }).ToList<Club>();
+
+            RaisePropertyChanged("Clubs");
+        }
+
+        #endregion Clubs
 
         #region Weather
 
         private void loadWeather()
         {
             //check if network and client are available and newsurl exists
-            if (NetworkInterface.GetIsNetworkAvailable() && Settings.Locations.Count > 0)
+            if (NetworkInterface.GetIsNetworkAvailable() && (Locations != null && Locations.Count > 0))
             {
-                string url = string.Format("http://forecast.weather.gov/MapClick.php?lat={0}&lon={1}&FcstType=dwml", Settings.Locations[0].Latitude, Settings.Locations[0].Longitude);
+                string googleWeather = "http://www.google.com/ig/api?weather=,,,{0},{1}&hl={2}";
+                int latitude = Utils.GeoToGoogleCode(Locations[0].Latitude);
+                int longitude = Utils.GeoToGoogleCode(Locations[0].Longitude);
+                string url = string.Format(googleWeather, latitude, longitude, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
 
                 var request = HttpWebRequest.Create(url);
-                var result = (IAsyncResult)request.BeginGetResponse(loadWeatherCallback, request);
-            }
-        }
-
-        private void loadWeatherCallback(IAsyncResult result)
-        {
-            try
-            {
-                var request = (HttpWebRequest)result.AsyncState;
-                var response = request.EndGetResponse(result);
-
-                using (var stream = response.GetResponseStream())
-                using (var reader = new StreamReader(stream))
+                request.BeginGetResponse((iar) =>
                 {
-                    string contents = reader.ReadToEnd();
-
-                    Deployment.Current.Dispatcher.BeginInvoke(() =>
+                    try
                     {
-                        loadWeatherCompleted(contents);
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-        }
+                        var response = request.EndGetResponse(iar);
 
-        private void loadWeatherCompleted(string results)
-        {
-            try
-            {
-                XDocument weatherDoc = XDocument.Parse(results);
+                        using (var stream = response.GetResponseStream())
+                        using (var reader = new StreamReader(stream, System.Text.Encoding.GetEncoding("iso-8859-1")))
+                        {
+                            string contents = reader.ReadToEnd();
 
-                XElement timeLayouts = weatherDoc.Root.Element("data").Descendants("time-layout").Where(t => t.Descendants("start-valid-time").Count() >= 12).First();
+                            Deployment.Current.Dispatcher.BeginInvoke(() =>
+                            {
+                                try
+                                {
+                                    XElement root = XElement.Parse(contents).Element("weather");
 
-                //create new forecasts with name and date
-                List<Forecast> fItems = (from item in timeLayouts.Descendants("start-valid-time")
-                                         select new Forecast
-                                         {
-                                             Name = item.Attribute("period-name") != null ? item.Attribute("period-name").Value.ToString() : "",
-                                             Date = DateTime.Parse(item.Value.ToString())
-                                         }).ToList<Forecast>();
+                                    //create new forecasts with name and date
+                                    Forecasts = (from item in root.Elements("forecast_conditions")
+                                                 select new Forecast
+                                                 {
+                                                     Name = Utils.ToLongDayOfWeekName(item.Element("day_of_week").Attribute("data").Value),
+                                                     LowTemperature = int.Parse(item.Element("low").Attribute("data").Value),
+                                                     HighTemperature = int.Parse(item.Element("high").Attribute("data").Value),
+                                                     Conditions = item.Element("condition").Attribute("data").Value,
+                                                     ImageUrl = "http://www.google.com/" + item.Element("icon").Attribute("data").Value.Replace(".gif", ".png")
+                                                 }).ToList<Forecast>();
+                                    var currentforecastnode = root.Element("current_conditions");
+                                    CurrentForecast = new CurrentForecast()
+                                    {
+                                        //TODO: change to temp_c if using celcius
+                                        Temperature = currentforecastnode.Element("temp_f").Attribute("data").Value,
+                                        Wind = currentforecastnode.Element("wind_condition").Attribute("data").Value,
+                                        Humidity = currentforecastnode.Element("humidity").Attribute("data").Value,
+                                        Conditions = currentforecastnode.Element("condition").Attribute("data").Value,
+                                        ImageUrl = "http://www.google.com/" + currentforecastnode.Element("icon").Attribute("data").Value.Replace(".gif", ".png")
+                                    };
 
-                fItems.ForEach(x => Forecasts.Add(x));
-
-                //set min temperature
-                int tempCount = 0;
-                IEnumerable<XElement> currentNodes = (from a in weatherDoc.Root.Element("data").Element("parameters").Elements("temperature")
-                                                      where a.Attribute("type").Value == "minimum"
-                                                      select a).Descendants("value");
-                if (currentNodes != null)
-                {
-                    if (Forecasts[0].Name == "Tonight")
-                        tempCount = 0;
-                    else
-                        tempCount = 1;
-
-                    foreach (XElement item in currentNodes)
-                    {
-                        Forecasts[tempCount].Temperature = int.Parse(item.Value);
-                        tempCount += 2;
+                                    RaisePropertyChanged("Forecasts");
+                                    RaisePropertyChanged("CurrentForecast");
+                                }
+                                catch (Exception e)
+                                {
+                                }
+                            });
+                        }
                     }
-                }
-
-                //set max temperature
-                currentNodes = (from a in weatherDoc.Root.Element("data").Element("parameters").Elements("temperature")
-                                where a.Attribute("type").Value == "maximum"
-                                select a).Descendants("value");
-                if (currentNodes != null)
-                {
-                    if (Forecasts[0].Name == "Tonight")
-                        tempCount = 1;
-                    else
-                        tempCount = 0;
-
-                    foreach (XElement item in currentNodes)
+                    catch (Exception ex)
                     {
-                        Forecasts[tempCount].Temperature = int.Parse(item.Value);
-                        tempCount += 2;
                     }
-                }
-
-                //set weather condition
-                currentNodes = weatherDoc.Root.Element("data").Element("parameters").Element("weather").Descendants("weather-conditions");
-                if (currentNodes != null)
-                {
-                    for (int i = 0; i < currentNodes.Count(); i++)
-                    {
-                        Forecasts[i].Conditions = currentNodes.ElementAt(i).Attribute("weather-summary").Value.ToString();
-                    }
-                }
-
-                //set image url
-                //(precipitation percentage is embedded in image)
-                currentNodes = weatherDoc.Root.Element("data").Element("parameters").Element("conditions-icon").Descendants("icon-link");
-                if (currentNodes != null)
-                {
-                    for (int i = 0; i < currentNodes.Count(); i++)
-                    {
-                        Forecasts[i].ImageUrl = currentNodes.ElementAt(i).Value;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
+                }, null);
             }
         }
 
         #endregion Weather
-
-        #endregion Private Methods
-
-        #region Event
-
-        public delegate void NewsUpdatedEventHandler(object sender, NewsUpdatedEventArgs e);
-
-        public event NewsUpdatedEventHandler NewsUpdated;
-
-        protected virtual void OnNewsUpdated(NewsUpdatedEventArgs e)
-        {
-            if (NewsUpdated != null)
-                NewsUpdated(this, e);
-        }
-
-        #endregion Event
-    }
-
-    public class NewsUpdatedEventArgs : EventArgs
-    {
-        public string Message { get; set; }
     }
 }

@@ -37,12 +37,12 @@ namespace MySchoolApp
             }
         }
 
-        private NavigationMode mode = NavigationMode.New;
+        //private NavigationMode mode = NavigationMode.New;
 
-        public static NavigationMode CurrentNavigationMode
-        {
-            get { return (App.Current as App).mode; }
-        }
+        //public static NavigationMode CurrentNavigationMode
+        //{
+        //    get { return (App.Current as App).mode; }
+        //}
 
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
@@ -85,7 +85,7 @@ namespace MySchoolApp
         {
             if (!App.ViewModel.IsDataLoaded)
             {
-                //App.ViewModel.LoadData();
+                App.ViewModel.LoadData();
             }
         }
 
@@ -95,7 +95,7 @@ namespace MySchoolApp
         {
             if (!App.ViewModel.IsDataLoaded)
             {
-                //App.ViewModel.LoadData();
+                App.ViewModel.LoadData();
             }
         }
 
@@ -147,7 +147,7 @@ namespace MySchoolApp
             // screen to remain active until the application is ready to render.
             RootFrame = new PhoneApplicationFrame();
             RootFrame.Navigated += CompleteInitializePhoneApplication;
-            RootFrame.Navigating += new NavigatingCancelEventHandler(RootFrame_Navigating);
+            //RootFrame.Navigating += new NavigatingCancelEventHandler(RootFrame_Navigating);
 
             // Handle navigation failures
             RootFrame.NavigationFailed += RootFrame_NavigationFailed;
@@ -156,10 +156,10 @@ namespace MySchoolApp
             phoneApplicationInitialized = true;
         }
 
-        private void RootFrame_Navigating(object sender, NavigatingCancelEventArgs e)
-        {
-            mode = e.NavigationMode;
-        }
+        //private void RootFrame_Navigating(object sender, NavigatingCancelEventArgs e)
+        //{
+        //    mode = e.NavigationMode;
+        //}
 
         // Do not add any additional code to this method
         private void CompleteInitializePhoneApplication(object sender, NavigationEventArgs e)

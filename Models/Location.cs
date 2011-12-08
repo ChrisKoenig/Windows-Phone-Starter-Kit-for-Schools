@@ -8,6 +8,7 @@
 //
 //
 using System;
+using System.Device.Location;
 
 namespace MySchoolApp
 {
@@ -18,5 +19,13 @@ namespace MySchoolApp
         public double Longitude { get; set; }
 
         public double Latitude { get; set; }
+
+        public GeoCoordinate Coordinate
+        {
+            get
+            {
+                return new GeoCoordinate(Latitude, Longitude);
+            }
+        }
     }
 }
