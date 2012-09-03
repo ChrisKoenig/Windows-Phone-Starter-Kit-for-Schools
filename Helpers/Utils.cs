@@ -119,5 +119,12 @@ namespace MySchoolApp.Helpers
                 return new SolidColorBrush(Colors.Red);
             }
         }
+
+        internal static string GetDayOfWeekFromDate(string p)
+        {
+            var date = DateTime.Parse(p);
+            var dow = date.DayOfWeek;
+            return dow.ToString();
+        }
     }
 }

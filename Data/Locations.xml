@@ -8,6 +8,7 @@
     license agreement between you and Microsoft.
 -->
 <locations>
+  <!--<location title="Weather Test" latitude="40.902542" longitude="-74.223802" />-->
   <location title="Campus Fountain" latitude="47.653753112267744" longitude="-122.30778694152832" />
   <location title="Football Stadium" latitude="47.65054420627862" longitude="-122.30268001556396" />
   <location title="Marine Sciences Bldg" latitude="47.64992263863015" longitude="-122.3128080368042" />

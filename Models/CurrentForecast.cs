@@ -21,6 +21,6 @@ namespace MySchoolApp
 
         public string Temperature { get; set; }
 
-        public string ImageUrl { get; set; }
+        public Uri ImageUrl { get; set; }
     }
 }

@@ -29,5 +29,7 @@ namespace MySchoolApp
         {
             get { return Name.ToUpper(); }
         }
+
+        public string WeatherApiKey { get; set; }
     }
 }

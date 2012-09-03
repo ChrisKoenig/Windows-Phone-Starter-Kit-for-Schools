@@ -110,6 +110,7 @@ namespace MySchoolApp
                 Name = settingsDoc.Root.Element("name").Value,
                 NewsUrl = settingsDoc.Root.Element("newsUrl").Value,
                 BingMapsKey = settingsDoc.Root.Element("bingMapsKey").Value,
+                WeatherApiKey = settingsDoc.Root.Element("weatherApiKey").Value,
                 ThemeColor1 = Utils.GetColorFromRGB(settingsDoc.Root.Element("themeColor1").Value),
                 ThemeColor2 = Utils.GetColorFromRGB(settingsDoc.Root.Element("themeColor2").Value)
             };
@@ -234,13 +235,28 @@ namespace MySchoolApp
 
         private void loadWeather()
         {
-            //check if network and client are available and newsurl exists
+            //check if network and client are available and WeatherApiKey exists
             if (NetworkInterface.GetIsNetworkAvailable() && (Locations != null && Locations.Count > 0))
             {
-                string googleWeather = "http://www.google.com/ig/api?weather=,,,{0},{1}&hl={2}";
-                int latitude = Utils.GeoToGoogleCode(Locations[0].Latitude);
-                int longitude = Utils.GeoToGoogleCode(Locations[0].Longitude);
-                string url = string.Format(googleWeather, latitude, longitude, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                if (Settings.WeatherApiKey == null || Settings.WeatherApiKey.Trim().Length == 0)
+                {
+                    CurrentForecast = new CurrentForecast()
+                    {
+                        ImageUrl = new Uri("Resources/error.png", UriKind.Relative),
+                        Temperature = "error",
+                        Wind = "retrieving",
+                        Humidity = "weather",
+                        Conditions = "api key",
+                    };
+                    RaisePropertyChanged("Forecasts");
+                    RaisePropertyChanged("CurrentForecast");
+                    return;
+                }
+
+                string weatherUrl = "http://free.worldweatheronline.com/feed/weather.ashx?q={0},{1}&num_of_days=5&key={2}";
+                double latitude = Locations[0].Latitude;
+                double longitude = Locations[0].Longitude;
+                string url = string.Format(weatherUrl, latitude, longitude, Settings.WeatherApiKey);
 
                 var request = HttpWebRequest.Create(url);
                 request.BeginGetResponse((iar) =>
@@ -258,27 +274,34 @@ namespace MySchoolApp
                             {
                                 try
                                 {
-                                    XElement root = XElement.Parse(contents).Element("weather");
+                                    XElement root = XElement.Parse(contents);
 
                                     //create new forecasts with name and date
-                                    Forecasts = (from item in root.Elements("forecast_conditions")
+                                    Forecasts = (from item in root.Elements("weather")
                                                  select new Forecast
                                                  {
-                                                     Name = Utils.ToLongDayOfWeekName(item.Element("day_of_week").Attribute("data").Value),
-                                                     LowTemperature = int.Parse(item.Element("low").Attribute("data").Value),
-                                                     HighTemperature = int.Parse(item.Element("high").Attribute("data").Value),
-                                                     Conditions = item.Element("condition").Attribute("data").Value,
-                                                     ImageUrl = "http://www.google.com/" + item.Element("icon").Attribute("data").Value.Replace(".gif", ".png")
+                                                     Name = Utils.GetDayOfWeekFromDate(item.Element("date").Value),
+                                                     //TODO: change to tempMinC if using celcius
+                                                     LowTemperature = int.Parse(item.Element("tempMinF").Value),
+                                                     //TODO: change to tempMaxC if using celcius
+                                                     HighTemperature = int.Parse(item.Element("tempMaxF").Value),
+                                                     Conditions = item.Element("weatherDesc").Value,
+                                                     ImageUrl = new Uri(item.Element("weatherIconUrl").Value, UriKind.Absolute),
                                                  }).ToList<Forecast>();
-                                    var currentforecastnode = root.Element("current_conditions");
+                                    var currentforecastnode = root.Element("current_condition");
                                     CurrentForecast = new CurrentForecast()
                                     {
-                                        //TODO: change to temp_c if using celcius
-                                        Temperature = currentforecastnode.Element("temp_f").Attribute("data").Value,
-                                        Wind = currentforecastnode.Element("wind_condition").Attribute("data").Value,
-                                        Humidity = currentforecastnode.Element("humidity").Attribute("data").Value,
-                                        Conditions = currentforecastnode.Element("condition").Attribute("data").Value,
-                                        ImageUrl = "http://www.google.com/" + currentforecastnode.Element("icon").Attribute("data").Value.Replace(".gif", ".png")
+                                        //TODO: change to temp_C if using celcius
+                                        Temperature = currentforecastnode.Element("temp_F").Value,
+                                        Wind = String.Format(
+                                            //TODO: Change to KPH for Metric
+                                            "{0} MPH {1}",
+                                            //TODO: change to windspeedKmph if using metric
+                                            currentforecastnode.Element("windspeedMiles").Value,
+                                            currentforecastnode.Element("winddir16Point").Value),
+                                        Humidity = currentforecastnode.Element("humidity").Value,
+                                        Conditions = currentforecastnode.Element("weatherDesc").Value,
+                                        ImageUrl = new Uri(currentforecastnode.Element("weatherIconUrl").Value, UriKind.Absolute),
                                     };
 
                                     RaisePropertyChanged("Forecasts");

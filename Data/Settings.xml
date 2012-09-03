@@ -16,4 +16,8 @@
   <!-- How to generate a Bing Maps key: http://msdn.microsoft.com/library/ff428642.aspx -->
   <bingMapsKey></bingMapsKey>
  
+  <!-- How to generate a Free Weather API key: http://www.worldweatheronline.com/register.aspx -->
+  <weatherApiKey></weatherApiKey>
+
+
 </settings>
