@@ -22,12 +22,6 @@ namespace MySchoolApp
 {
     public partial class FeedPage : PhoneApplicationPage
     {
-        #region Private Variables
-
-        WebClient feedClient;
-
-        #endregion Private Variables
-
         public FeedPage()
         {
             InitializeComponent();

@@ -109,7 +109,8 @@ namespace MySchoolApp
             {
                 Name = settingsDoc.Root.Element("name").Value,
                 NewsUrl = settingsDoc.Root.Element("newsUrl").Value,
-                BingMapsKey = settingsDoc.Root.Element("bingMapsKey").Value,
+                MapsApplicationId = settingsDoc.Root.Element("mapsApplicationId").Value,
+                MapsAuthenticationToken = settingsDoc.Root.Element("mapsAuthenitcationToken").Value,
                 WeatherApiKey = settingsDoc.Root.Element("weatherApiKey").Value,
                 ThemeColor1 = Utils.GetColorFromRGB(settingsDoc.Root.Element("themeColor1").Value),
                 ThemeColor2 = Utils.GetColorFromRGB(settingsDoc.Root.Element("themeColor2").Value)
@@ -307,15 +308,11 @@ namespace MySchoolApp
                                     RaisePropertyChanged("Forecasts");
                                     RaisePropertyChanged("CurrentForecast");
                                 }
-                                catch (Exception e)
-                                {
-                                }
+                                catch { }
                             });
                         }
                     }
-                    catch (Exception ex)
-                    {
-                    }
+                    catch { }
                 }, null);
             }
         }

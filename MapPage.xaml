@@ -5,7 +5,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:maps="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps" 
+    xmlns:maps="clr-namespace:Microsoft.Phone.Maps.Controls;assembly=Microsoft.Phone.Maps" 
     x:Class="MySchoolApp.MapPage"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -16,7 +16,7 @@
     shell:SystemTray.IsVisible="True">
 	<phone:PhoneApplicationPage.Resources>
 		<DataTemplate x:Key="PinDataTemplate">
-            <maps:Pushpin Location="{Binding Coordinate,Mode=OneTime}" Content="{Binding Title,Mode=OneTime}"/>
+            <!--<maps:Pushpin Location="{Binding Coordinate,Mode=OneTime}" Content="{Binding Title,Mode=OneTime}"/>-->
         </DataTemplate>
 	</phone:PhoneApplicationPage.Resources>
 
@@ -31,8 +31,9 @@
         <Rectangle Fill="{Binding Settings.ThemeColor2}" Height="10" VerticalAlignment="Top" Margin="0,10,0,0"/>
         <Image Source="Resources/bgd_title.png" Stretch="None" VerticalAlignment="Top" HorizontalAlignment="Left"/>
         <TextBlock x:Name="ApplicationTitle" Text="{Binding Settings.NameToUpper}" Style="{StaticResource PhoneTextNormalStyle}" Margin="24,30,12,15" d:LayoutOverrides="Height"/>
+        
         <maps:Map x:Name="map"  Center="{Binding Locations[0].Coordinate}" ZoomLevel="15" Margin="12,0,12,12" Grid.Row="1" >
-        	<maps:MapItemsControl ItemsSource="{Binding Locations}" ItemTemplate="{StaticResource PinDataTemplate}"/>
+        	<!--<maps:MapItemsControl ItemsSource="{Binding Locations}" ItemTemplate="{StaticResource PinDataTemplate}"/>-->
         </maps:Map>
     </Grid>
  </phone:PhoneApplicationPage>

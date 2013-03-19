@@ -21,6 +21,10 @@ namespace MySchoolApp
 
         public string BingMapsKey { get; set; }
 
+        public string MapsApplicationId { get; set; }
+
+        public string MapsAuthenticationToken { get; set; }
+
         public SolidColorBrush ThemeColor1 { get; set; }
 
         public SolidColorBrush ThemeColor2 { get; set; }
