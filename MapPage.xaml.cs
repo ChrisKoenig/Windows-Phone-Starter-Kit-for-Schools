@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.Windows.Media;
 using Microsoft.Phone.Maps.Controls;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace MySchoolApp
 {
@@ -40,11 +41,24 @@ namespace MySchoolApp
 
         private void ShowLocations()
         {
+            bool useThemeColor1 = true;
+
             foreach (var location in App.ViewModel.Locations)
             {
                 // Create a small circle to mark the current location.
                 Ellipse myCircle = new Ellipse();
-                myCircle.Fill = new SolidColorBrush(Colors.Blue);
+
+                if (useThemeColor1)
+                {
+                    myCircle.Fill = App.ViewModel.Settings.ThemeColor1;
+                    useThemeColor1 = false;
+                }
+                else
+                {
+                    myCircle.Fill = App.ViewModel.Settings.ThemeColor2;
+                    useThemeColor1 = true;
+                }
+
                 myCircle.Height = 20;
                 myCircle.Width = 20;
                 myCircle.Opacity = 50;
