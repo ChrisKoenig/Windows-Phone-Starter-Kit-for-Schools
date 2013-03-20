@@ -12,9 +12,13 @@
   <themeColor1>#3d7cc1</themeColor1>
   <themeColor2>#ccff00</themeColor2>
   <newsUrl>http://blogs.msdn.com/b/mainfeed.aspx?Type=BlogsOnly</newsUrl>
-  
-  <!-- How to generate a Bing Maps key: http://msdn.microsoft.com/library/ff428642.aspx -->
+
+  <!--How to get a Bing Maps key: http://msdn.microsoft.com/en-us/library/ff428642.aspx-->
   <bingMapsKey></bingMapsKey>
+  
+  <!-- How to generate a Maps ApplicationId and AuthenticationToken: http://msdn.microsoft.com/en-us/library/windowsphone/develop/jj207033(v=vs.105).aspx#BKMK_appidandtoken -->
+  <mapsApplicationId></mapsApplicationId>
+  <mapsAuthenitcationToken></mapsAuthenitcationToken>
  
   <!-- How to generate a Free Weather API key: http://www.worldweatheronline.com/register.aspx -->
   <weatherApiKey></weatherApiKey>
