@@ -15,7 +15,7 @@
 
   <!-- this is required for the static map -->
   <!--How to get a Bing Maps key: http://msdn.microsoft.com/en-us/library/ff428642.aspx-->
-  <bingMapsKey>Aivsu4Fi-nZ2xA_JnFAgCLKgxw_ozw1UTFmX9tQQlwHiG6Gscwb5FA1HAbLLyFgx</bingMapsKey>
+  <bingMapsKey></bingMapsKey>
 
   <!-- This is required for the interactive map -->
   <!-- How to generate a Maps ApplicationId and AuthenticationToken: http://msdn.microsoft.com/en-us/library/windowsphone/develop/jj207033(v=vs.105).aspx#BKMK_appidandtoken -->
@@ -23,7 +23,7 @@
   <mapsAuthenitcationToken></mapsAuthenitcationToken>
 
   <!-- How to generate a Free Weather API key: http://www.worldweatheronline.com/register.aspx -->
-  <weatherApiKey>0d6cd3cb8c193731110508</weatherApiKey>
+  <weatherApiKey></weatherApiKey>
 
 
 </settings>
