@@ -109,6 +109,7 @@ namespace MySchoolApp
             {
                 Name = settingsDoc.Root.Element("name").Value,
                 NewsUrl = settingsDoc.Root.Element("newsUrl").Value,
+                BingMapsKey = settingsDoc.Root.Element("bingMapsKey").Value,
                 MapsApplicationId = settingsDoc.Root.Element("mapsApplicationId").Value,
                 MapsAuthenticationToken = settingsDoc.Root.Element("mapsAuthenitcationToken").Value,
                 WeatherApiKey = settingsDoc.Root.Element("weatherApiKey").Value,
