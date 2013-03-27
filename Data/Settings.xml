@@ -25,5 +25,4 @@
   <!-- How to generate a Free Weather API key: http://www.worldweatheronline.com/register.aspx -->
   <weatherApiKey></weatherApiKey>
 
-
 </settings>
