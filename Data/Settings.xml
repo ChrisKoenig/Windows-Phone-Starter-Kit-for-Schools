@@ -14,7 +14,7 @@
   <newsUrl>http://blogs.msdn.com/b/mainfeed.aspx?Type=BlogsOnly</newsUrl>
 
   <!-- this is required for the static map -->
-  <!--How to get a Bing Maps key: http://msdn.microsoft.com/en-us/library/ff428642.aspx-->
+  <!--How to get a Bing Maps key: http://msdn.microsoft.com/en-us/library/ff428642.aspx -->
   <bingMapsKey></bingMapsKey>
 
   <!-- This is required for the interactive map -->

@@ -255,7 +255,7 @@ namespace MySchoolApp
                     return;
                 }
 
-                string weatherUrl = "http://free.worldweatheronline.com/feed/weather.ashx?q={0},{1}&num_of_days=5&key={2}";
+                string weatherUrl = "http://api.worldweatheronline.com/free/v1/weather.ashx?q={0},{1}&format=xml&num_of_days=5&key={2}";
                 double latitude = Locations[0].Latitude;
                 double longitude = Locations[0].Longitude;
                 string url = string.Format(weatherUrl, latitude, longitude, Settings.WeatherApiKey);
